@@ -1,6 +1,8 @@
 /// <reference types="@cloudflare/workers-types" />
 
-export const onRequestGet: PagesFunction = async (context) => {
+interface Env {}
+
+export const onRequestGet: any = async (context: { request: Request; env: Env }) => {
   const { searchParams } = new URL(context.request.url);
   const url = searchParams.get('url');
 
@@ -12,35 +14,50 @@ export const onRequestGet: PagesFunction = async (context) => {
   }
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Cloudflare-Worker-Weather-Proxy'
+      }
+    });
+    
+    const contentType = response.headers.get('content-type') || '';
     
     if (!response.ok) {
-      const text = await response.text();
-      // Handle cases where API might return HTML error pages
-      if (text.startsWith("<!doctype") || text.startsWith("<html")) {
-        return new Response(JSON.stringify({ 
-          error: `API returned HTML error: ${response.status}`,
-          isHtml: true 
-        }), {
-          status: response.status,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-      return new Response(JSON.stringify({ error: `API Error: ${response.status}` }), {
+      const errorText = await response.text();
+      return new Response(JSON.stringify({ 
+        error: `External API Error: ${response.status}`,
+        details: errorText.slice(0, 200)
+      }), {
         status: response.status,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    const data = await response.json();
-    return new Response(JSON.stringify(data), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: "Network error fetching weather data" }), {
+    // Ensure we are returning JSON
+    if (contentType.includes('application/json')) {
+      const data = await response.json();
+      return new Response(JSON.stringify(data), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    } else {
+      const text = await response.text();
+      return new Response(JSON.stringify({ 
+        error: "API returned non-JSON content",
+        contentType,
+        preview: text.slice(0, 100)
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  } catch (error: any) {
+    return new Response(JSON.stringify({ 
+      error: "Network error in proxy function",
+      message: error.message 
+    }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
