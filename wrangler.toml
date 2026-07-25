@@ -8,4 +8,3 @@ binding = "ASSETS"
 
 [[routes]]
 pattern = "weather-intelligence-worker.gowtham-nataraja.workers.dev/*"
-script = "weather-intelligence-worker"
