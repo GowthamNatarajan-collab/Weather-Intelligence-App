@@ -1,0 +1,6 @@
+{
+  "name": "Weather Intelligence App",
+  "description": "A smart weather dashboard providing real-time data, 7-day forecasts, and planning recommendations based on local conditions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
