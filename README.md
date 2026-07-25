@@ -54,6 +54,18 @@ A sophisticated, high-performance weather dashboard built with React, Vite, and 
    npm run deploy
    ```
 
+## 🌐 Adding a Custom Domain
+
+### Cloudflare Pages
+1. Go to **Workers & Pages** > [Your Project] > **Custom domains**.
+2. Click **Set up a custom domain** and enter your domain name.
+3. Follow the DNS verification steps provided by Cloudflare.
+
+### Cloudflare Workers
+1. Go to **Workers & Pages** > [Your Worker] > **Settings** > **Triggers**.
+2. Under **Custom Domains**, click **Add Custom Domain**.
+3. Enter your domain and save.
+
 ## 📂 Project Structure
 
 - `/src`: React application source code.
