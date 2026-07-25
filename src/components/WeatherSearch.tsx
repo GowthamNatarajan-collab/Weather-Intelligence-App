@@ -12,6 +12,7 @@ export default function WeatherSearch({ onSelectCity }: WeatherSearchProps) {
   const [results, setResults] = useState<City[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,23 +29,28 @@ export default function WeatherSearch({ onSelectCity }: WeatherSearchProps) {
     const timer = setTimeout(async () => {
       if (query.length < 2) {
         setResults([]);
+        setError(null);
         return;
       }
 
       setIsLoading(true);
+      setError(null);
       try {
         const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
         const response = await fetch(`/api/weather-proxy?url=${encodeURIComponent(url)}`);
         const data = await response.json() as any;
         
-        if (data.results) {
+        if (data.results && data.results.length > 0) {
           setResults(data.results);
           setIsOpen(true);
         } else {
           setResults([]);
+          setIsOpen(true); // Show the "no results" state
         }
       } catch (error) {
         console.error('Search error:', error);
+        setError("Failed to search cities");
+        setIsOpen(true);
       } finally {
         setIsLoading(false);
       }
@@ -70,27 +76,37 @@ export default function WeatherSearch({ onSelectCity }: WeatherSearchProps) {
         )}
       </div>
 
-      {isOpen && results.length > 0 && (
+      {isOpen && query.length >= 2 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50">
-          {results.map((city) => (
-            <button
-              key={city.id}
-              className="w-full px-4 py-3 text-left hover:bg-white/10 transition-colors flex items-center gap-3 group border-b border-white/5 last:border-0"
-              onClick={() => {
-                onSelectCity(city);
-                setQuery('');
-                setIsOpen(false);
-              }}
-            >
-              <MapPin className="w-4 h-4 text-zinc-500 group-hover:text-blue-500" />
-              <div>
-                <div className="text-zinc-100 font-medium">{city.name}</div>
-                <div className="text-xs text-zinc-500">
-                  {city.admin1 ? `${city.admin1}, ` : ''}{city.country}
+          {error ? (
+            <div className="px-4 py-6 text-center">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          ) : results.length > 0 ? (
+            results.map((city) => (
+              <button
+                key={city.id}
+                className="w-full px-4 py-3 text-left hover:bg-white/10 transition-colors flex items-center gap-3 group border-b border-white/5 last:border-0"
+                onClick={() => {
+                  onSelectCity(city);
+                  setQuery('');
+                  setIsOpen(false);
+                }}
+              >
+                <MapPin className="w-4 h-4 text-zinc-500 group-hover:text-blue-500" />
+                <div>
+                  <div className="text-zinc-100 font-medium">{city.name}</div>
+                  <div className="text-xs text-zinc-500">
+                    {city.admin1 ? `${city.admin1}, ` : ''}{city.country}
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))
+          ) : !isLoading ? (
+            <div className="px-4 py-6 text-center">
+              <p className="text-sm text-slate-400">No cities found for "{query}"</p>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

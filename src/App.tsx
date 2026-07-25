@@ -78,18 +78,24 @@ export default function App() {
         <AnimatePresence mode="wait">
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-500"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="p-6 bg-red-500/10 border border-red-500/20 rounded-3xl flex flex-col md:flex-row items-center gap-4 text-red-500 shadow-lg shadow-red-500/5"
             >
-              <AlertTriangle className="w-5 h-5" />
-              <span className="text-sm font-medium">{error}</span>
+              <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div className="text-center md:text-left flex-grow">
+                <h4 className="font-bold text-red-400">Weather Data Error</h4>
+                <p className="text-sm opacity-90">{error}</p>
+              </div>
               <button 
                 onClick={() => selectedCity && fetchWeather(selectedCity)}
-                className="ml-auto p-2 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-xl transition-all flex items-center gap-2 text-sm font-bold"
               >
                 <RefreshCcw className="w-4 h-4" />
+                Retry Connection
               </button>
             </motion.div>
           )}
