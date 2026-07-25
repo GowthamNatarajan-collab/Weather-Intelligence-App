@@ -77,34 +77,37 @@ export default function WeatherSearch({ onSelectCity }: WeatherSearchProps) {
       </div>
 
       {isOpen && query.length >= 2 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-[100] backdrop-blur-xl">
           {error ? (
             <div className="px-4 py-6 text-center">
-              <p className="text-sm text-red-400">{error}</p>
+              <p className="text-sm font-semibold text-red-400">{error}</p>
             </div>
           ) : results.length > 0 ? (
             results.map((city) => (
               <button
                 key={city.id}
-                className="w-full px-4 py-3 text-left hover:bg-white/10 transition-colors flex items-center gap-3 group border-b border-white/5 last:border-0"
+                className="w-full px-5 py-4 text-left hover:bg-blue-600/20 transition-all flex items-center gap-4 group border-b border-white/5 last:border-0"
                 onClick={() => {
                   onSelectCity(city);
                   setQuery('');
                   setIsOpen(false);
                 }}
               >
-                <MapPin className="w-4 h-4 text-zinc-500 group-hover:text-blue-500" />
+                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                  <MapPin className="w-5 h-5 text-zinc-400 group-hover:text-blue-400" />
+                </div>
                 <div>
-                  <div className="text-zinc-100 font-medium">{city.name}</div>
-                  <div className="text-xs text-zinc-500">
+                  <div className="text-zinc-100 font-bold group-hover:text-white transition-colors">{city.name}</div>
+                  <div className="text-sm text-zinc-500 group-hover:text-zinc-400">
                     {city.admin1 ? `${city.admin1}, ` : ''}{city.country}
                   </div>
                 </div>
               </button>
             ))
           ) : !isLoading ? (
-            <div className="px-4 py-6 text-center">
-              <p className="text-sm text-slate-400">No cities found for "{query}"</p>
+            <div className="px-4 py-8 text-center bg-zinc-900/50">
+              <p className="text-sm font-medium text-zinc-400">No results found for "<span className="text-zinc-100 font-bold">{query}</span>"</p>
+              <p className="text-xs text-zinc-500 mt-1">Try a different city name</p>
             </div>
           ) : null}
         </div>

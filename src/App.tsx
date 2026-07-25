@@ -59,7 +59,7 @@ export default function App() {
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Header */}
-        <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl">
+        <header className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl relative z-20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
               <CloudSun className="w-6 h-6 text-white" />
