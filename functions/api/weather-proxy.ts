@@ -1,3 +1,5 @@
+/// <reference types="@cloudflare/workers-types" />
+
 export const onRequestGet: PagesFunction = async (context) => {
   const { searchParams } = new URL(context.request.url);
   const url = searchParams.get('url');

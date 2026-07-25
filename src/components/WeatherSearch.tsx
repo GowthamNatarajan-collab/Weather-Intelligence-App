@@ -35,7 +35,7 @@ export default function WeatherSearch({ onSelectCity }: WeatherSearchProps) {
       try {
         const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
         const response = await fetch(`/api/weather-proxy?url=${encodeURIComponent(url)}`);
-        const data = await response.json();
+        const data = await response.json() as any;
         
         if (data.results) {
           setResults(data.results);
